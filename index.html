@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerdas Cermat Babak Rebutan - SD Negeri 2 Tebing Suluh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #0F172A;
+            --card-bg: #1E293B;
+            --accent-blue: #38BDF8;
+            --accent-purple: #818CF8;
+            --accent-yellow: #FACC15;
+            --accent-green: #4ADE80;
+            --accent-red: #F87171;
+            --text-light: #F8FAFC;
+            --text-muted: #94A3B8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(129, 140, 248, 0.15) 0%, transparent 40%);
+        }
+
+        /* HEADER */
+        header {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-logo {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+        }
+
+        .brand-text h1 {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.6rem;
+            color: var(--accent-yellow);
+            letter-spacing: 1px;
+        }
+
+        .brand-text p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+            transform: translateY(-2px);
+        }
+
+        /* SCOREBOARD GRID FOR 6 TEAMS */
+        .scoreboard-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            padding: 20px 30px;
+        }
+
+        .team-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 15px;
+            border: 3px solid transparent;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .team-card.team-a { border-color: #38BDF8; }
+        .team-card.team-b { border-color: #FACC15; }
+        .team-card.team-c { border-color: #F472B6; }
+        .team-card.team-d { border-color: #4ADE80; }
+        .team-card.team-e { border-color: #FB923C; }
+        .team-card.team-f { border-color: #C084FC; }
+
+        .team-card.active-turn {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
+            animation: pulse-border 1.2s infinite alternate;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 15px rgba(250, 204, 21, 0.4); }
+            100% { box-shadow: 0 0 35px rgba(250, 204, 21, 0.9); }
+        }
+
+        .team-card.locked {
+            opacity: 0.4;
+            filter: grayscale(80%);
+        }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .team-name {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.2rem;
+        }
+
+        .team-a .team-name { color: #38BDF8; }
+        .team-b .team-name { color: #FACC15; }
+        .team-c .team-name { color: #F472B6; }
+        .team-d .team-name { color: #4ADE80; }
+        .team-e .team-name { color: #FB923C; }
+        .team-f .team-name { color: #C084FC; }
+
+        .buzz-badge {
+            background: #EF4444;
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: 800;
+            display: none;
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-4px); }
+        }
+
+        .score-display {
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-align: center;
+            margin: 5px 0;
+            font-family: 'Fredoka', cursive;
+            letter-spacing: 1px;
+        }
+
+        .score-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-score {
+            flex: 1;
+            padding: 6px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .btn-plus { background: rgba(74, 222, 128, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
+        .btn-plus:hover { background: var(--accent-green); color: #000; }
+
+        .btn-minus { background: rgba(248, 113, 113, 0.2); color: var(--accent-red); border: 1px solid var(--accent-red); }
+        .btn-minus:hover { background: var(--accent-red); color: white; }
+
+        /* MAIN CONTENT AREA */
+        main {
+            flex: 1;
+            padding: 0 30px 30px;
+            display: grid;
+            grid-template-columns: 2fr 1.2fr;
+            gap: 25px;
+        }
+
+        .question-stage {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .stage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-tags {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .subject-tag {
+            background: linear-gradient(135deg, var(--accent-purple), #6366F1);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .diff-tag {
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .diff-sangat-mudah { background: #065F46; color: #34D399; border: 1px solid #34D399; }
+        .diff-mudah { background: #075985; color: #38BDF8; border: 1px solid #38BDF8; }
+        .diff-sedang { background: #854D0E; color: #FACC15; border: 1px solid #FACC15; }
+
+        .q-number {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .question-box {
+            font-size: 1.6rem;
+            font-weight: 700;
+            line-height: 1.4;
+            color: #FFFFFF;
+            margin: 20px 0;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+        }
+
+        .answer-box {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 20px;
+            border: 2px dashed rgba(255,255,255,0.15);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .answer-box.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .answer-label {
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .answer-text {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--accent-yellow);
+        }
+
+        /* TIMER BAR */
+        .timer-container {
+            margin-bottom: 25px;
+        }
+
+        .timer-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .timer-bar-bg {
+            height: 12px;
+            background: #334155;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .timer-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            transition: width 0.1s linear, background-color 0.3s;
+            border-radius: 10px;
+        }
+
+        /* CONTROLS BAR */
+        .stage-controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-start { background: var(--accent-green); color: #064E3B; }
+        .btn-start:hover:not(:disabled) { transform: translateY(-2px); background: #86EFAC; }
+
+        .btn-buzz-trigger { background: var(--accent-yellow); color: #713F12; }
+        .btn-buzz-trigger:hover:not(:disabled) { transform: translateY(-2px); background: #FDE047; }
+
+        .btn-reveal { background: var(--accent-purple); color: white; }
+        .btn-reveal:hover:not(:disabled) { transform: translateY(-2px); background: #93C5FD; color: #1E3A8A; }
+
+        .btn-next { background: #38BDF8; color: #0C4A6E; }
+        .btn-next:hover:not(:disabled) { transform: translateY(-2px); background: #7DD3FC; }
+
+        /* BUZZER PANEL FOR 6 TEAMS */
+        .buzzer-panel {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .panel-title {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.2rem;
+            color: var(--accent-yellow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .keyboard-hint {
+            font-size: 0.75rem;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        .buzzer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .btn-buzz {
+            padding: 14px 10px;
+            border: none;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            transition: all 0.15s active;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.4);
+            position: relative;
+            top: 0;
+        }
+
+        .btn-buzz:active:not(:disabled) {
+            top: 3px;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.4);
+        }
+
+        .btn-buzz.a { background: linear-gradient(135deg, #0284C7, #38BDF8); }
+        .btn-buzz.b { background: linear-gradient(135deg, #CA8A04, #FACC15); color: #422006; }
+        .btn-buzz.c { background: linear-gradient(135deg, #DB2777, #F472B6); }
+        .btn-buzz.d { background: linear-gradient(135deg, #15803D, #4ADE80); color: #052E16; }
+        .btn-buzz.e { background: linear-gradient(135deg, #C2410C, #FB923C); }
+        .btn-buzz.f { background: linear-gradient(135deg, #7E22CE, #C084FC); }
+
+        .btn-buzz:disabled {
+            filter: grayscale(80%);
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .key-badge {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: monospace;
+        }
+
+        /* MODAL SOAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.5rem;
+            color: var(--accent-yellow);
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        .q-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .q-item {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+            gap: 15px;
+        }
+
+        .q-item:hover {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: var(--accent-blue);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 950px) {
+            main { grid-template-columns: 1fr; }
+            .buzzer-panel { order: 2; }
+            .scoreboard-container { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER WITH EMBEDDED LOGO -->
+    <header>
+        <div class="brand">
+            <svg class="brand-logo" viewBox="0 0 500 580" xmlns="http://www.w3.org/2000/svg">
+                <!-- Shield Background -->
+                <path d="M 50,20 Q 250,-10 450,20 L 430,380 Q 250,500 250,510 Q 250,500 70,380 Z" fill="#6B2D33" stroke="#FFFFFF" stroke-width="6"/>
+                
+                <!-- Inner Red Emblem Base -->
+                <path d="M 250,230 L 270,250 L 300,230 L 300,260 L 330,260 L 315,290 L 345,300 L 320,320 L 340,340 L 310,350 L 320,380 L 290,370 L 280,400 L 250,380 L 220,400 L 210,370 L 180,380 L 190,350 L 160,340 L 180,320 L 155,300 L 185,290 L 170,260 L 200,260 L 200,230 L 230,250 Z" fill="#D32F2F"/>
+                
+                <!-- White Flower -->
+                <g fill="#FFFFFF" stroke="#6B2D33" stroke-width="2">
+                    <path d="M 250,230 Q 280,180 250,150 Q 220,180 250,230 Z"/>
+                    <path d="M 250,230 Q 320,200 340,240 Q 290,260 250,230 Z"/>
+                    <path d="M 250,230 Q 310,290 290,330 Q 250,280 250,230 Z"/>
+                    <path d="M 250,230 Q 190,290 210,330 Q 250,280 250,230 Z"/>
+                    <path d="M 250,230 Q 180,200 160,240 Q 210,260 250,230 Z"/>
+                    <polygon points="250,220 255,230 265,230 257,236 260,246 250,240 240,246 243,236 235,230 245,230" fill="#D32F2F"/>
+                </g>
+
+                <!-- Students -->
+                <!-- Male Student -->
+                <g fill="#FFFFFF" stroke="#000000" stroke-width="3">
+                    <path d="M 160,110 Q 180,80 200,110 L 210,140 Q 185,145 160,140 Z"/>
+                    <circle cx="185" cy="120" r="15" fill="#FFF"/>
+                    <path d="M 150,140 L 220,140 L 210,220 L 160,220 Z"/>
+                </g>
+                <!-- Female Student -->
+                <g fill="#FFFFFF" stroke="#000000" stroke-width="3">
+                    <path d="M 290,110 Q 310,80 330,110 L 340,140 Q 315,145 290,140 Z"/>
+                    <circle cx="315" cy="120" r="15" fill="#FFF"/>
+                    <path d="M 280,140 L 350,140 L 340,220 L 290,220 Z"/>
+                </g>
+
+                <!-- Rice & Cotton Wreath -->
+                <path d="M 110,100 Q 80,250 230,420" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-dasharray="10,10"/>
+                <path d="M 390,100 Q 420,250 270,420" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round"/>
+
+                <!-- Header Texts -->
+                <text x="250" y="55" font-family="Arial" font-weight="bold" font-size="18" fill="#FFFFFF" text-anchor="middle">DENGAN BERDISIPLIN DAN BERKARAKTER</text>
+                <text x="250" y="75" font-family="Arial" font-weight="bold" font-size="18" fill="#FFFFFF" text-anchor="middle">KITA BERPRESTASI</text>
+                <text x="250" y="115" font-family="Arial" font-weight="900" font-size="38" fill="#FFFFFF" text-anchor="middle">10600529</text>
+
+                <!-- Ribbon Banner -->
+                <g>
+                    <path d="M 10,400 L 90,380 L 100,470 L 10,490 Z" fill="#C62828"/>
+                    <path d="M 490,400 L 410,380 L 400,470 L 490,490 Z" fill="#C62828"/>
+                    <path d="M 70,430 Q 250,470 430,430 L 420,530 Q 250,570 80,530 Z" fill="#8E0000" stroke="#FFD700" stroke-width="4"/>
+                    <text x="250" y="475" font-family="Impact, Arial" font-size="34" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">★ SDN 2 TEBING SULUH ★</text>
+                    <text x="250" y="515" font-family="Arial" font-weight="bold" font-size="22" fill="#FFFFFF" text-anchor="middle">KECAMATAN LEMPUING</text>
+                </g>
+            </svg>
+            <div class="brand-text">
+                <h1>BABAK REBUTAN CERDAS CERMAT</h1>
+                <p>Fase C (Kelas 5 & 6) — SD Negeri 2 Tebing Suluh</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-secondary" onclick="openBankModal()">
+                <span>📚</span> Bank Soal
+            </button>
+            <button class="btn-secondary" onclick="resetAll()">
+                <span>🔄</span> Reset Total
+            </button>
+        </div>
+    </header>
+
+    <!-- SCOREBOARD (KELOMPOK A - F) -->
+    <div class="scoreboard-container">
+        <!-- Team A -->
+        <div class="team-card team-a" id="card-team-a">
+            <div class="team-header">
+                <span class="team-name">KELOMPOK A</span>
+                <span class="buzz-badge" id="badge-a">MENJAWAB!</span>
+            </div>
+            <div class="score-display" id="score-a">0</div>
+            <div class="score-controls">
+                <button class="btn-score btn-plus" onclick="adjustScore('a', 100)">+100</button>
+                <button class="btn-score btn-minus" onclick="adjustScore('a', -50)">-50</button>
+            </div>
+        </div>
+
+        <!-- Team B -->
+        <div class="team-card team-b" id="card-team-b">
+            <div class="team-header">
+                <span class="team-name">KELOMPOK B</span>
+                <span class="buzz-badge" id="badge-b">MENJAWAB!</span>
+            </div>
+            <div class="score-display" id="score-b">0</div>
+            <div class="score-controls">
+                <button class="btn-score btn-plus" onclick="adjustScore('b', 100)">+100</button>
+                <button class="btn-score btn-minus" onclick="adjustScore('b', -50)">-50</button>
+            </div>
+        </div>
+
+        <!-- Team C -->
+        <div class="team-card team-c" id="card-team-c">
+            <div class="team-header">
+                <span class="team-name">KELOMPOK C</span>
+                <span class="buzz-badge" id="badge-c">MENJAWAB!</span>
+            </div>
+            <div class="score-display" id="score-c">0</div>
+            <div class="score-controls">
+                <button class="btn-score btn-plus" onclick="adjustScore('c', 100)">+100</button>
+                <button class="btn-score btn-minus" onclick="adjustScore('c', -50)">-50</button>
+            </div>
+        </div>
+
+        <!-- Team D -->
+        <div class="team-card team-d" id="card-team-d">
+            <div class="team-header">
+                <span class="team-name">KELOMPOK D</span>
+                <span class="buzz-badge" id="badge-d">MENJAWAB!</span>
+            </div>
+            <div class="score-display" id="score-d">0</div>
+            <div class="score-controls">
+                <button class="btn-score btn-plus" onclick="adjustScore('d', 100)">+100</button>
+                <button class="btn-score btn-minus" onclick="adjustScore('d', -50)">-50</button>
+            </div>
+        </div>
+
+        <!-- Team E -->
+        <div class="team-card team-e" id="card-team-e">
+            <div class="team-header">
+                <span class="team-name">KELOMPOK E</span>
+                <span class="buzz-badge" id="badge-e">MENJAWAB!</span>
+            </div>
+            <div class="score-display" id="score-e">0</div>
+            <div class="score-controls">
+                <button class="btn-score btn-plus" onclick="adjustScore('e', 100)">+100</button>
+                <button class="btn-score btn-minus" onclick="adjustScore('e', -50)">-50</button>
+            </div>
+        </div>
+
+        <!-- Team F -->
+        <div class="team-card team-f" id="card-team-f">
+            <div class="team-header">
+                <span class="team-name">KELOMPOK F</span>
+                <span class="buzz-badge" id="badge-f">MENJAWAB!</span>
+            </div>
+            <div class="score-display" id="score-f">0</div>
+            <div class="score-controls">
+                <button class="btn-score btn-plus" onclick="adjustScore('f', 100)">+100</button>
+                <button class="btn-score btn-minus" onclick="adjustScore('f', -50)">-50</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN INTERFACE -->
+    <main>
+        <!-- QUESTION & CONTROL STAGE -->
+        <section class="question-stage">
+            <div>
+                <div class="stage-header">
+                    <div class="header-tags">
+                        <span class="subject-tag" id="subject-tag">IPAS</span>
+                        <span class="diff-tag diff-sangat-mudah" id="diff-tag">Sangat Mudah</span>
+                    </div>
+                    <span class="q-number" id="q-number">Soal 1 dari 32</span>
+                </div>
+
+                <div class="question-box" id="question-text">
+                    Klik tombol "Bacakan Soal" atau pilih dari Bank Soal untuk memulai pertandingan babak rebutan!
+                </div>
+
+                <div class="answer-box" id="answer-box">
+                    <div class="answer-label">Kunci Jawaban Dewan Juri:</div>
+                    <div class="answer-text" id="answer-text">-</div>
+                </div>
+            </div>
+
+            <div>
+                <!-- TIMER BAR -->
+                <div class="timer-container">
+                    <div class="timer-info">
+                        <span>Waktu Menjawab / Berpikir</span>
+                        <span id="timer-text">10s</span>
+                    </div>
+                    <div class="timer-bar-bg">
+                        <div class="timer-bar-fill" id="timer-fill"></div>
+                    </div>
+                </div>
+
+                <!-- MAIN CONTROLS -->
+                <div class="stage-controls">
+                    <button class="btn-action btn-start" id="btn-read" onclick="startQuestion()">
+                        <span>📢</span> Bacakan Soal
+                    </button>
+                    <button class="btn-action btn-buzz-trigger" id="btn-enable-buzz" onclick="enableBuzzers()" disabled>
+                        <span>🔔</span> Buka Bel Rebutan
+                    </button>
+                    <button class="btn-action btn-reveal" id="btn-reveal" onclick="toggleAnswer()">
+                        <span>👁️</span> Kunci Jawaban
+                    </button>
+                    <button class="btn-action btn-next" onclick="nextQuestion()">
+                        <span>Lanjut ➡️</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- BUZZER SIMULATOR PANEL (A - F) -->
+        <aside class="buzzer-panel">
+            <div class="panel-title">
+                <span>TOMBOL BEL (PANITIA)</span>
+                <span class="keyboard-hint">Key: [A] s/d [F]</span>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">
+                Tekan tombol di bawah atau gunakan tombol keyboard A, B, C, D, E, F saat kelompok menekan bel.
+            </p>
+            <div class="buzzer-grid">
+                <button class="btn-buzz a" id="buzz-btn-a" onclick="triggerBuzz('a')" disabled>
+                    <span>KELOMPOK A</span>
+                    <span class="key-badge">Tekan A</span>
+                </button>
+                <button class="btn-buzz b" id="buzz-btn-b" onclick="triggerBuzz('b')" disabled>
+                    <span>KELOMPOK B</span>
+                    <span class="key-badge">Tekan B</span>
+                </button>
+                <button class="btn-buzz c" id="buzz-btn-c" onclick="triggerBuzz('c')" disabled>
+                    <span>KELOMPOK C</span>
+                    <span class="key-badge">Tekan C</span>
+                </button>
+                <button class="btn-buzz d" id="buzz-btn-d" onclick="triggerBuzz('d')" disabled>
+                    <span>KELOMPOK D</span>
+                    <span class="key-badge">Tekan D</span>
+                </button>
+                <button class="btn-buzz e" id="buzz-btn-e" onclick="triggerBuzz('e')" disabled>
+                    <span>KELOMPOK E</span>
+                    <span class="key-badge">Tekan E</span>
+                </button>
+                <button class="btn-buzz f" id="buzz-btn-f" onclick="triggerBuzz('f')" disabled>
+                    <span>KELOMPOK F</span>
+                    <span class="key-badge">Tekan F</span>
+                </button>
+            </div>
+            <button class="btn-secondary" style="width: 100%; justify-content: center;" onclick="resetBuzzerLocks()">
+                🔓 Buka Lemparan / Reset Bel
+            </button>
+        </aside>
+    </main>
+
+    <!-- BANK SOAL MODAL -->
+    <div class="modal-overlay" id="bank-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Bank Soal Rebutan Fase C</h2>
+                <button class="btn-close" onclick="closeBankModal()">&times;</button>
+            </div>
+            <div class="q-list" id="q-list-container">
+                <!-- Question items generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO SYNTHESIS & SCRIPT -->
+    <script>
+        // DATA SOAL FASE C
+        const questionsData = [
+            { subject: "IPAS", difficulty: "Sangat Mudah", question: "Organ tubuh manusia yang berfungsi sebagai alat pernapasan utama adalah...", answer: "Paru-paru" },
+            { subject: "IPAS", difficulty: "Sangat Mudah", question: "Planet terdekat dari matahari dalam sistem tata surya kita adalah...", answer: "Merkurius" },
+            { subject: "IPAS", difficulty: "Mudah", question: "Proses pembuatan makanan pada tumbuhan hijau dengan bantuan cahaya matahari disebut...", answer: "Fotosintesis" },
+            { subject: "IPAS", difficulty: "Sedang", question: "Pembuluh darah yang mengalirkan darah kaya oksigen keluar dari jantung ke seluruh tubuh adalah pembuluh...", answer: "Nadi / Arteri" },
+            { subject: "Matematika", difficulty: "Sangat Mudah", question: "Berapakah hasil dari 150 ditambah 250?", answer: "400" },
+            { subject: "Matematika", difficulty: "Sangat Mudah", question: "Berapakah hasil pembagian dari 100 dibagi 4?", answer: "25" },
+            { subject: "Matematika", difficulty: "Mudah", question: "Berapakah akar kuadrat dari 81?", answer: "9" },
+            { subject: "Matematika", difficulty: "Sedang", question: "Sebuah kubus memiliki panjang rusuk 5 cm. Berapakah volume kubus tersebut?", answer: "125 cm³" },
+            { subject: "Pendidikan Pancasila", difficulty: "Sangat Mudah", question: "Sila pertama Pancasila dilambangkan dengan simbol...", answer: "Bintang" },
+            { subject: "Pendidikan Pancasila", difficulty: "Mudah", question: "Keputusan bersama yang diambil berdasarkan kesepakatan bulat dalam musyawarah disebut secara...", answer: "Mufakat" },
+            { subject: "Pendidikan Pancasila", difficulty: "Mudah", question: "UUD 1945 disahkan sebagai undang-undang dasar negara Indonesia pada tanggal...", answer: "18 Agustus 1945" },
+            { subject: "Pendidikan Pancasila", difficulty: "Sedang", question: "Sebutkan nama lembaga negara Indonesia yang berwenang mengubah dan menetapkan UUD!", answer: "MPR (Majelis Permusyawaratan Rakyat)" },
+            { subject: "Bahasa Indonesia", difficulty: "Sangat Mudah", question: "Lawan kata atau antonim dari kata 'dermawan' adalah...", answer: "Pelit / Kikir" },
+            { subject: "Bahasa Indonesia", difficulty: "Mudah", question: "Gagasan utama yang menjadi dasar pengembangan sebuah paragraf disebut...", answer: "Ide Pokok / Gagasan Utama" },
+            { subject: "Bahasa Indonesia", difficulty: "Sedang", question: "Karangan cerita rekaan atau imajinatif yang tidak berdasarkan kejadian nyata disebut teks...", answer: "Fiksi" },
+            { subject: "Bahasa Indonesia", difficulty: "Sedang", question: "Kalimat yang memuat informasi secara jelas, padat, dan sesuai kaidah tata bahasa disebut kalimat...", answer: "Kalimat Efektif" },
+            { subject: "PAI", difficulty: "Sangat Mudah", question: "Rukun Islam yang pertama adalah mengucapkan dua kalimat...", answer: "Syahadat" },
+            { subject: "PAI", difficulty: "Mudah", question: "Kitab suci Al-Qur'an diturunkan kepada nabi terakhir, yaitu Nabi...", answer: "Muhammad SAW" },
+            { subject: "PAI", difficulty: "Mudah", question: "Puasa wajib yang dilaksanakan oleh umat Islam selama satu bulan penuh dilaksanakan pada bulan...", answer: "Ramadhan" },
+            { subject: "PAI", difficulty: "Sedang", question: "Sebutkan nama malaikat yang bertugas menyampaikan wahyu kepada para nabi dan rasul!", answer: "Malaikat Jibril" },
+            { subject: "PJOK", difficulty: "Sangat Mudah", question: "Jumlah pemain dalam satu tim sepak bola di lapangan adalah...", answer: "11 orang" },
+            { subject: "PJOK", difficulty: "Mudah", question: "Gerakan memantul-mantulkan bola basket ke lantai sambil berjalan atau berlari disebut...", answer: "Dribbling / Menggiring bola" },
+            { subject: "PJOK", difficulty: "Mudah", question: "Induk organisasi olahraga bola voli di seluruh Indonesia disingkat...", answer: "PBVSI" },
+            { subject: "PJOK", difficulty: "Sedang", question: "Kemampuan tubuh untuk melakukan aktivitas tanpa mengalami kelelahan yang berlebihan disebut...", answer: "Kebugaran Jasmani" },
+            { subject: "Bahasa Inggris", difficulty: "Sangat Mudah", question: "What is the English word for 'Buku'?", answer: "Book" },
+            { subject: "Bahasa Inggris", difficulty: "Mudah", question: "Translate into Indonesian: 'I go to school by bicycle'.", answer: "Saya pergi ke sekolah naik sepeda" },
+            { subject: "Bahasa Inggris", difficulty: "Mudah", question: "What is the third day of the week after Sunday and Monday?", answer: "Tuesday" },
+            { subject: "Bahasa Inggris", difficulty: "Sedang", question: "What is the opposite of the word 'Big'?", answer: "Small" },
+            { subject: "Seni Budaya", difficulty: "Sangat Mudah", question: "Warna primer terdiri dari merah, kuning, dan...", answer: "Biru" },
+            { subject: "Seni Budaya", difficulty: "Mudah", question: "Tari Saman adalah tarian tradisional khas yang berasal dari daerah...", answer: "Aceh" },
+            { subject: "Seni Budaya", difficulty: "Mudah", question: "Lagu daerah berjudul 'Gundul-Gundul Pacul' berasal dari provinsi...", answer: "Jawa Tengah" },
+            { subject: "Seni Budaya", difficulty: "Sedang", question: "Alat musik Angklung berasal dari Jawa Barat dan dimainkan dengan cara...", answer: "Digoyang / Digoyangkan" }
+        ];
+
+        let currentQIndex = 0;
+        let scores = { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
+        let buzzedTeam = null;
+        let isBuzzAllowed = false;
+        let timerInterval = null;
+        let timeLeft = 10;
+        const totalTimer = 10;
+        let wrongTeams = [];
+
+        const teamsList = ['a', 'b', 'c', 'd', 'e', 'f'];
+
+        let audioCtx;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'buzz') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(440, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
+                } else if (type === 'wrong') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(150, ctx.currentTime);
+                    osc.frequency.setValueAtTime(100, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                }
+            } catch (e) {
+                console.log("Audio ready");
+            }
+        }
+
+        window.onload = function() {
+            loadQuestion(0);
+            renderBankList();
+        };
+
+        function loadQuestion(index) {
+            currentQIndex = index;
+            const q = questionsData[index];
+
+            document.getElementById('subject-tag').innerText = q.subject;
+            
+            const diffTag = document.getElementById('diff-tag');
+            diffTag.innerText = q.difficulty;
+            diffTag.className = 'diff-tag ' + (
+                q.difficulty === 'Sangat Mudah' ? 'diff-sangat-mudah' :
+                q.difficulty === 'Mudah' ? 'diff-mudah' : 'diff-sedang'
+            );
+
+            document.getElementById('q-number').innerText = `Soal ${index + 1} dari ${questionsData.length}`;
+            document.getElementById('question-text').innerText = q.question;
+            document.getElementById('answer-text').innerText = q.answer;
+
+            document.getElementById('answer-box').classList.remove('visible');
+            wrongTeams = [];
+            resetBuzzerLocks();
+            resetTimerBar();
+
+            document.getElementById('btn-read').disabled = false;
+            document.getElementById('btn-enable-buzz').disabled = true;
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = totalTimer;
+            updateTimerUI();
+
+            timerInterval = setInterval(() => {
+                timeLeft -= 0.1;
+                if (timeLeft <= 0) {
+                    timeLeft = 0;
+                    clearInterval(timerInterval);
+                    onTimeOut();
+                }
+                updateTimerUI();
+            }, 100);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function resetTimerBar() {
+            stopTimer();
+            timeLeft = totalTimer;
+            document.getElementById('timer-text').innerText = `${totalTimer}s`;
+            document.getElementById('timer-fill').style.width = '100%';
+            document.getElementById('timer-fill').style.background = 'linear-gradient(90deg, var(--accent-blue), var(--accent-purple))';
+        }
+
+        function updateTimerUI() {
+            document.getElementById('timer-text').innerText = `${timeLeft.toFixed(1)}s`;
+            const percentage = (timeLeft / totalTimer) * 100;
+            const fill = document.getElementById('timer-fill');
+            fill.style.width = `${percentage}%`;
+
+            if (percentage < 30) {
+                fill.style.background = 'var(--accent-red)';
+            } else if (percentage < 60) {
+                fill.style.background = 'var(--accent-yellow)';
+            }
+        }
+
+        function onTimeOut() {
+            playSound('wrong');
+            if (buzzedTeam) {
+                alert(`Waktu menjawab Kelompok ${buzzedTeam.toUpperCase()} telah habis! (-50 Poin)`);
+                adjustScore(buzzedTeam, -50);
+                wrongTeams.push(buzzedTeam);
+                resetBuzzerLocks();
+            } else {
+                alert('Waktu berpikir telah habis!');
+                isBuzzAllowed = false;
+                disableAllBuzzers();
+            }
+        }
+
+        function startQuestion() {
+            document.getElementById('btn-enable-buzz').disabled = false;
+            document.getElementById('btn-read').disabled = true;
+            
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(document.getElementById('question-text').innerText);
+                utterance.lang = 'id-ID';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function enableBuzzers() {
+            isBuzzAllowed = true;
+            teamsList.forEach(team => {
+                if (!wrongTeams.includes(team)) {
+                    document.getElementById(`buzz-btn-${team}`).disabled = false;
+                }
+            });
+            startTimer();
+        }
+
+        function triggerBuzz(team) {
+            if (!isBuzzAllowed || wrongTeams.includes(team)) return;
+
+            buzzedTeam = team;
+            isBuzzAllowed = false;
+            stopTimer();
+            playSound('buzz');
+
+            document.getElementById(`card-team-${team}`).classList.add('active-turn');
+            document.getElementById(`badge-${team}`).style.display = 'inline-block';
+
+            disableAllBuzzers();
+            startTimer();
+        }
+
+        function disableAllBuzzers() {
+            teamsList.forEach(t => {
+                document.getElementById(`buzz-btn-${t}`).disabled = true;
+            });
+        }
+
+        function resetBuzzerLocks() {
+            buzzedTeam = null;
+            stopTimer();
+            resetTimerBar();
+
+            teamsList.forEach(team => {
+                const card = document.getElementById(`card-team-${team}`);
+                card.classList.remove('active-turn');
+                document.getElementById(`badge-${team}`).style.display = 'none';
+
+                if (wrongTeams.includes(team)) {
+                    card.classList.add('locked');
+                    document.getElementById(`buzz-btn-${team}`).disabled = true;
+                } else {
+                    card.classList.remove('locked');
+                    if (isBuzzAllowed) {
+                        document.getElementById(`buzz-btn-${team}`).disabled = false;
+                    }
+                }
+            });
+        }
+
+        function adjustScore(team, delta) {
+            scores[team] += delta;
+            document.getElementById(`score-${team}`).innerText = scores[team];
+
+            if (delta > 0) {
+                playSound('correct');
+                document.getElementById('answer-box').classList.add('visible');
+                stopTimer();
+            } else if (delta < 0) {
+                playSound('wrong');
+                wrongTeams.push(team);
+                resetBuzzerLocks();
+            }
+        }
+
+        function toggleAnswer() {
+            const box = document.getElementById('answer-box');
+            box.classList.toggle('visible');
+        }
+
+        function nextQuestion() {
+            if (currentQIndex < questionsData.length - 1) {
+                loadQuestion(currentQIndex + 1);
+            } else {
+                alert('Seluruh soal babak rebutan telah selesai dibacakan!');
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!isBuzzAllowed) return;
+            const key = e.key.toLowerCase();
+            if (teamsList.includes(key)) {
+                triggerBuzz(key);
+            }
+        });
+
+        function openBankModal() {
+            document.getElementById('bank-modal').style.display = 'flex';
+        }
+
+        function closeBankModal() {
+            document.getElementById('bank-modal').style.display = 'none';
+        }
+
+        function renderBankList() {
+            const container = document.getElementById('q-list-container');
+            container.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = 'q-item';
+                item.innerHTML = `
+                    <div style="flex:1;">
+                        <span style="font-size:0.75rem; padding: 2px 8px; border-radius: 10px; background: rgba(255,255,255,0.1); margin-right: 6px;">
+                            ${q.difficulty}
+                        </span>
+                        <strong style="color:var(--accent-yellow)">[${q.subject}]</strong> ${q.question}
+                    </div>
+                    <button class="btn-secondary" style="padding:6px 12px; font-size:0.8rem;" onclick="selectQuestionFromBank(${idx})">
+                        Pilih
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function selectQuestionFromBank(idx) {
+            loadQuestion(idx);
+            closeBankModal();
+        }
+
+        function resetAll() {
+            if (confirm('Apakah Anda yakin ingin mereset seluruh skor dan memulai ulang kuis?')) {
+                scores = { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
+                teamsList.forEach(t => document.getElementById(`score-${t}`).innerText = 0);
+                loadQuestion(0);
+            }
+        }
+    </script>
+</body>
+</html>
